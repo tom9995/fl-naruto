@@ -30,20 +30,41 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final String _apiUrl = "https://narutodb.xyz/api/character";
-
+  final _limit = 15;
   List<Character> _characters = [];
+  int _page = 1;
+  final ScrollController _controller = ScrollController();
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     fetchCharacters();
+    _controller.addListener(() {
+      if (_controller.position.maxScrollExtent - 100 < _controller.offset) {
+        fetchCharacters();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   Future<void> fetchCharacters() async {
-    final response = await Dio().get(_apiUrl);
+    if (isLoading) return;
+    setState(() {
+      isLoading = true;
+    });
+    final response = await Dio()
+        .get(_apiUrl, queryParameters: {"page": _page, "limit": _limit});
     final List<dynamic> data = response.data["characters"];
     setState(() {
-      _characters = data.map((d) => Character.fromJson(d)).toList();
+      _characters = [..._characters, ...data.map((d) => Character.fromJson(d))];
+      _page++;
+      isLoading = false;
     });
   }
 
@@ -58,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: ListView.builder(
+            controller: _controller,
             itemBuilder: (content, index) {
               final character = _characters[index];
               return Card(
