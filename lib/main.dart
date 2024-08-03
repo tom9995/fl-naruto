@@ -2,7 +2,16 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:naruto_app/compoennts/commonDrawer.dart';
+import 'package:naruto_app/compoennts/commonbar.dart';
 import 'package:naruto_app/modules/characters/character.dart';
+import 'package:go_router/go_router.dart';
+import 'package:naruto_app/pages/search.dart';
+
+final _router = GoRouter(routes: [
+  GoRoute(path: '/', builder: (context, state) => MyHomePage()),
+  GoRoute(path: '/search', builder: (context, state) => Search())
+]);
 
 void main() {
   runApp(const MyApp());
@@ -13,8 +22,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const MyHomePage(),
+    return MaterialApp.router(
+      routerConfig: _router,
     );
   }
 }
@@ -53,13 +62,16 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller.dispose();
   }
 
-  Future<void> fetchCharacters() async {
+  Future<void> fetchCharacters([String? word]) async {
     if (isLoading) return;
     setState(() {
       isLoading = true;
     });
-    final response = await Dio()
-        .get(_apiUrl, queryParameters: {"page": _page, "limit": _limit});
+    final response = await Dio().get(_apiUrl, queryParameters: {
+      "page": _page,
+      "limit": _limit,
+      "search": word ?? ""
+    });
     final List<dynamic> data = response.data["characters"];
     setState(() {
       _characters = [..._characters, ...data.map((d) => Character.fromJson(d))];
@@ -71,11 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("NARUTO図鑑"),
-          backgroundColor: Color(0xFFBCE2E8),
-        ),
+        appBar: AppbarCommon(title: "ホーム"),
+        drawer: DarawerCommon(),
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: ListView.builder(
