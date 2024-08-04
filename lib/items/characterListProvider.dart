@@ -18,7 +18,7 @@ class CharacterlistNotifier extends StateNotifier<List<Character>> {
   }
 
   Future<void> updateCharacterList([String? query = ""]) async {
-    print("update");
+    // print("update");
     final _limit = 15;
     List<Character> _characters = [];
     int _page = 1;
@@ -36,9 +36,13 @@ class CharacterlistNotifier extends StateNotifier<List<Character>> {
           queryParameters: {"page": _page, "limit": _limit, "name": query});
     }
 
-    final List<dynamic> data = response.data["characters"];
-    _characters = [..._characters, ...data.map((d) => Character.fromJson(d))];
+    if (query == "") {
+      final data = response.data["characters"];
+      _characters = [..._characters, ...data.map((d) => Character.fromJson(d))];
+    } else {
+      final data = response.data;
+      _characters = [Character.fromJson(data)];
+    }
     state = _characters;
-    print(_characters);
   }
 }

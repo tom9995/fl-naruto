@@ -36,7 +36,7 @@ class Search extends ConsumerWidget {
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
                 String query = prefs.getString('query') ?? "";
-                ref
+                await ref
                     .read(characterListProvider.notifier)
                     .updateCharacterList(query);
                 context.go("/");
