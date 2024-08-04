@@ -4,9 +4,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:naruto_app/compoennts/commonDrawer.dart';
 import 'package:naruto_app/compoennts/commonbar.dart';
+import 'package:naruto_app/items/loadingProvider.dart';
 import 'package:naruto_app/modules/characters/character.dart';
 import 'package:go_router/go_router.dart';
 import 'package:naruto_app/pages/search.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import './items/characterListProvider.dart';
+
+import 'items/searchWordProvider.dart';
 
 final _router = GoRouter(routes: [
   GoRoute(path: '/', builder: (context, state) => MyHomePage()),
@@ -14,7 +20,7 @@ final _router = GoRouter(routes: [
 ]);
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -28,60 +34,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({
-    super.key,
-  });
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final String _apiUrl = "https://narutodb.xyz/api/character";
-  final _limit = 15;
-  List<Character> _characters = [];
-  int _page = 1;
+class MyHomePage extends ConsumerWidget {
   final ScrollController _controller = ScrollController();
-  bool isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    fetchCharacters();
-    _controller.addListener(() {
-      if (_controller.position.maxScrollExtent - 100 < _controller.offset) {
-        fetchCharacters();
-      }
-    });
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final _characters = ref.watch(characterListProvider);
+    final _isload = ref.watch(loadingProvider);
+    final query = ref.watch(searchWordProvider);
 
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-  }
-
-  Future<void> fetchCharacters([String? word]) async {
-    if (isLoading) return;
-    setState(() {
-      isLoading = true;
-    });
-    final response = await Dio().get(_apiUrl, queryParameters: {
-      "page": _page,
-      "limit": _limit,
-      "search": word ?? ""
-    });
-    final List<dynamic> data = response.data["characters"];
-    setState(() {
-      _characters = [..._characters, ...data.map((d) => Character.fromJson(d))];
-      _page++;
-      isLoading = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppbarCommon(title: "ホーム"),
         drawer: DarawerCommon(),

@@ -1,29 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:naruto_app/compoennts/commonDrawer.dart';
 import 'package:naruto_app/compoennts/commonbar.dart';
+import 'package:naruto_app/items/characterListProvider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Search extends StatefulWidget {
-  const Search({super.key});
+import '../items/searchWordProvider.dart';
 
-  @override
-  State<Search> createState() => _SearchState();
-}
+class Search extends ConsumerWidget {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final searchWord = ref.watch(searchWordProvider);
 
-class _SearchState extends State<Search> {
-  String? searchWord = "";
+    void changeWord(String word) {
+      ref.read(searchWordProvider.notifier).updateQuery(word);
+    }
 
-  void changeWord(String word) {
-    setState(() {
-      searchWord = word;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppbarCommon(title: "検索"),
-      drawer: DarawerCommon(),
+      appBar: const AppbarCommon(title: "検索"),
+      drawer: const DarawerCommon(),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -38,8 +33,15 @@ class _SearchState extends State<Search> {
               ),
             ),
             ElevatedButton(
-              onPressed: () => context.go("/"),
-              child: Text("検索"),
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                String query = prefs.getString('query') ?? "";
+                ref
+                    .read(characterListProvider.notifier)
+                    .updateCharacterList(query);
+                context.go("/");
+              },
+              child: const Text("検索"),
             )
           ],
         ),
