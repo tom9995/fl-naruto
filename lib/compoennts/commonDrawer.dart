@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:naruto_app/items/characterListProvider.dart';
+import 'package:naruto_app/items/searchWordProvider.dart';
 
 List<List<String>> drawerLists = [
   ["ホーム", "/"],
@@ -23,6 +24,7 @@ class DarawerCommon extends ConsumerWidget {
                     ref
                         .read(characterListProvider.notifier)
                         .updateCharacterList(),
+                    ref.read(searchWordProvider.notifier).updateQuery(""),
                     context.go(drawerLists[index][1]),
                   });
         },

@@ -21,7 +21,10 @@ class CharacterlistNotifier extends StateNotifier<List<Character>> {
     // print("update");
     final _limit = 15;
     List<Character> _characters = [];
-    int _page = 1;
+    final prefs = await SharedPreferences.getInstance();
+    int _page = prefs.getInt("page") ?? 0;
+    _page++;
+    // print(_page);
 
     var response;
     if (query == "") {
@@ -38,11 +41,15 @@ class CharacterlistNotifier extends StateNotifier<List<Character>> {
 
     if (query == "") {
       final data = response.data["characters"];
-      _characters = [..._characters, ...data.map((d) => Character.fromJson(d))];
+      final prefs = await SharedPreferences.getInstance();
+      _characters = [...state, ...data.map((d) => Character.fromJson(d))];
     } else {
       final data = response.data;
       _characters = [Character.fromJson(data)];
     }
     state = _characters;
+    await prefs.setInt("page", _page);
+    // return state;
+    print(_page);
   }
 }

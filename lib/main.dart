@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:naruto_app/compoennts/commonDrawer.dart';
 import 'package:naruto_app/compoennts/commonbar.dart';
 import 'package:naruto_app/items/loadingProvider.dart';
+import 'package:naruto_app/items/pageProvider.dart';
 import 'package:naruto_app/modules/characters/character.dart';
 import 'package:go_router/go_router.dart';
 import 'package:naruto_app/pages/search.dart';
@@ -34,13 +35,56 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends ConsumerWidget {
-  final ScrollController _controller = ScrollController();
+class MyHomePage extends ConsumerStatefulWidget {
+  const MyHomePage({super.key});
 
-  Widget build(BuildContext context, WidgetRef ref) {
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends ConsumerState<MyHomePage> {
+  final ScrollController _controller = ScrollController();
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() async {
+      if (_controller.position.maxScrollExtent - 100 < _controller.offset &&
+          !isLoading) {
+        isLoading = true;
+        print("called");
+        // final prefs = await SharedPreferences.getInstance();
+        // String query = prefs.getString('query') ?? "";
+        // await ref
+        //     .read(pageProvider.notifier)
+        //     .setPage(ref.read(pageProvider.notifier).state++);
+        // int _page = await ref.read(pageProvider.notifier).getPage();
+        // int _page = prefs.getInt("page") ?? 1;
+        // print(_page);
+        ref.watch(characterListProvider.notifier).updateCharacterList("");
+        isLoading = false;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final _characters = ref.watch(characterListProvider);
-    final _isload = ref.watch(loadingProvider);
-    final query = ref.watch(searchWordProvider);
+    // final query = ref.watch(searchWordProvider);
+    // final _isload = ref.watch(loadingProvider);
+    // final page = ref.watch(pageProvider);
+    // print(page);
+
+    // void dispose() {
+    //   _controller.dispose();
+    // }
 
     return Scaffold(
         appBar: AppbarCommon(title: "ホーム"),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:naruto_app/items/characterListProvider.dart';
+import 'package:naruto_app/items/searchWordProvider.dart';
 
 class AppbarCommon extends ConsumerWidget implements PreferredSizeWidget {
   const AppbarCommon({required this.title});
@@ -19,6 +20,7 @@ class AppbarCommon extends ConsumerWidget implements PreferredSizeWidget {
           ),
           onPressed: () => {
                 ref.read(characterListProvider.notifier).updateCharacterList(),
+                ref.read(searchWordProvider.notifier).updateQuery(""),
                 context.go("/"),
               }),
       backgroundColor: Color(0xFFBCE2E8),
