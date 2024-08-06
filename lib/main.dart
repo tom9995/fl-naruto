@@ -50,10 +50,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   void initState() {
     super.initState();
     _controller.addListener(() async {
-      if (_controller.position.maxScrollExtent - 100 < _controller.offset &&
+      if (_controller.position.maxScrollExtent - 10 < _controller.offset &&
           !isLoading) {
         isLoading = true;
-        print("called");
+        // print("called");
         // final prefs = await SharedPreferences.getInstance();
         // String query = prefs.getString('query') ?? "";
         // await ref
@@ -62,7 +62,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         // int _page = await ref.read(pageProvider.notifier).getPage();
         // int _page = prefs.getInt("page") ?? 1;
         // print(_page);
-        ref.watch(characterListProvider.notifier).updateCharacterList("");
+        await ref.read(characterListProvider.notifier).updateCharacterList("");
         isLoading = false;
       }
     });
@@ -77,6 +77,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final _characters = ref.watch(characterListProvider);
+    // print(_characters);
     // final query = ref.watch(searchWordProvider);
     // final _isload = ref.watch(loadingProvider);
     // final page = ref.watch(pageProvider);
