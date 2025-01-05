@@ -1,16 +1,11 @@
-# naruto_app
+# NARUTOのキャラクター図鑑（Flutter版）
 
-A new Flutter project.
+NARUTOのキャラクター情報を表示するプロジェクト
 
-## Getting Started
+## 目次
 
-This project is a starting point for a Flutter application.
+- [概要](#概要)
 
-A few resources to get you started if this is your first Flutter project:
+## 概要
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+このプロジェクトは、NARUTOのキャラクター情報を図鑑の形式で表示するプロジェクトです。
